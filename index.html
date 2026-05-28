@@ -101,7 +101,7 @@
         }
 
         .notification-panel { right: 20px; }
-        .time-panel { left: 20px; }
+        .time-panel { right: 20px; }   /* ← Back on the right side */
 
         .panel-header {
             padding: 20px 24px 12px;
@@ -194,7 +194,7 @@
         </div>
     </div>
 
-    <!-- Notification Panel -->
+    <!-- Notification Panel (Right) -->
     <div class="panel notification-panel" id="notification-panel">
         <div class="panel-header">Notifications</div>
         <div class="divider"></div>
@@ -203,7 +203,7 @@
         </div>
     </div>
 
-    <!-- Time Panel (Left Corner) -->
+    <!-- Time Panel (Now on Right) -->
     <div class="panel time-panel" id="time-panel">
         <div class="panel-header">Date &amp; Time</div>
         <div class="divider"></div>
@@ -268,7 +268,7 @@
             const fullDateStr = `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
             document.getElementById('full-date').textContent = fullDateStr;
 
-            // Big time (true 24-hour when toggled)
+            // Big time
             let hours = now.getHours();
             let minutes = String(now.getMinutes()).padStart(2, '0');
             let seconds = String(now.getSeconds()).padStart(2, '0');
