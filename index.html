@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desktop</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Product+Sans:wght@400;500&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            overflow: hidden;
+            background-image: url('https://i.postimg.cc/ZYdtTVmV/IMG-4051.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            font-family: 'Product Sans', system-ui, sans-serif;
+        }
+
+        /* Taskbar */
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 48px;
+            background-color: #3C282B;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 12px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            gap: 10px;
+        }
+
+        /* Darker Gray Circle */
+        .icon-circle {
+            width: 32px;
+            height: 32px;
+            background-color: #2C1F22;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #E0E0E0;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .icon-circle:hover {
+            background-color: #34272A;
+        }
+
+        /* Material Symbols */
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24;
+        }
+
+        /* Date */
+        .date {
+            color: #E0E0E0;
+            font-size: 13.5px;
+            padding: 0 12px;
+            user-select: none;
+            cursor: pointer;
+        }
+
+        /* Panels - Material 3 Style */
+        .panel {
+            position: fixed;
+            bottom: 64px;
+            width: 360px;
+            background-color: #2C1F22;
+            border-radius: 28px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            opacity: 0;
+            transform: scale(0.85) translateY(20px);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2000;
+            pointer-events: none;
+        }
+
+        .panel.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+        }
+
+        .notification-panel { right: 20px; }
+        .time-panel { left: 20px; }
+
+        .panel-header {
+            padding: 20px 24px 12px;
+            font-size: 18px;
+            font-weight: 500;
+            color: #E0E0E0;
+        }
+
+        .divider {
+            height: 1px;
+            background-color: #3F2E32;
+            margin: 0 8px;
+        }
+
+        /* Time Panel Content */
+        .time-content {
+            padding: 20px 24px;
+            text-align: center;
+        }
+
+        .big-time {
+            font-size: 42px;
+            font-weight: 500;
+            color: #E0E0E0;
+            margin-bottom: 8px;
+        }
+
+        .full-date {
+            font-size: 15px;
+            color: #B0B0B0;
+            margin-bottom: 24px;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background-color: #3A2A2E;
+            border-radius: 20px;
+            margin: 0 16px 16px;
+        }
+
+        .toggle-label {
+            font-size: 14.5px;
+            color: #E0E0E0;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 42px;
+            height: 24px;
+            background-color: #4A3A3E;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            background-color: #E0E0E0;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active {
+            background-color: #8AB4F8;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(18px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Taskbar -->
+    <div class="taskbar">
+        <!-- Notification Icon -->
+        <div class="icon-circle" id="notification-btn">
+            <span class="material-symbols-outlined">notifications</span>
+        </div>
+
+        <!-- Clickable Date -->
+        <div class="date" id="date-btn">
+            <span id="date"></span>
+        </div>
+    </div>
+
+    <!-- Notification Panel -->
+    <div class="panel notification-panel" id="notification-panel">
+        <div class="panel-header">Notifications</div>
+        <div class="divider"></div>
+        <div style="margin: 12px 16px; padding: 16px; background-color: #3A2A2E; border-radius: 20px; color: #E0E0E0; font-size: 14.5px;">
+            Your browser is way better than it looked before.
+        </div>
+    </div>
+
+    <!-- Time Panel (Left Corner) -->
+    <div class="panel time-panel" id="time-panel">
+        <div class="panel-header">Date &amp; Time</div>
+        <div class="divider"></div>
+        
+        <div class="time-content">
+            <div class="big-time" id="big-time">12:00:00</div>
+            <div class="full-date" id="full-date">May 28, 2026</div>
+            
+            <div class="toggle-container">
+                <span class="toggle-label">24 hour time</span>
+                <div class="toggle-switch" id="military-toggle"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const notificationBtn = document.getElementById('notification-btn');
+        const dateBtn = document.getElementById('date-btn');
+        const notificationPanel = document.getElementById('notification-panel');
+        const timePanel = document.getElementById('time-panel');
+        const militaryToggle = document.getElementById('military-toggle');
+        
+        let use24Hour = false;
+
+        // Toggle notification panel
+        notificationBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notificationPanel.classList.toggle('show');
+            timePanel.classList.remove('show');
+        });
+
+        // Toggle time panel
+        dateBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            timePanel.classList.toggle('show');
+            notificationPanel.classList.remove('show');
+        });
+
+        // Close panels when clicking outside
+        document.addEventListener('click', () => {
+            notificationPanel.classList.remove('show');
+            timePanel.classList.remove('show');
+        });
+
+        // 24-hour toggle
+        militaryToggle.addEventListener('click', () => {
+            use24Hour = !use24Hour;
+            militaryToggle.classList.toggle('active', use24Hour);
+        });
+
+        // Live Time & Date
+        function updateClock() {
+            const now = new Date();
+            
+            // Taskbar date
+            const day = String(now.getDate()).padStart(2, '0');
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const monthShort = months[now.getMonth()];
+            document.getElementById('date').textContent = `${day}-${monthShort}-${now.getFullYear()}`;
+
+            // Full date in panel
+            const fullDateStr = `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+            document.getElementById('full-date').textContent = fullDateStr;
+
+            // Big time (true 24-hour when toggled)
+            let hours = now.getHours();
+            let minutes = String(now.getMinutes()).padStart(2, '0');
+            let seconds = String(now.getSeconds()).padStart(2, '0');
+            let timeStr;
+
+            if (use24Hour) {
+                timeStr = `${hours}:${minutes}:${seconds}`;
+            } else {
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                const displayHour = hours % 12 || 12;
+                timeStr = `${displayHour}:${minutes}:${seconds} ${ampm}`;
+            }
+
+            document.getElementById('big-time').textContent = timeStr;
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>
