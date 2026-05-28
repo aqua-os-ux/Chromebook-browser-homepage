@@ -34,10 +34,37 @@
             background-color: #3C282B;
             display: flex;
             align-items: center;
-            justify-content: flex-end;
             padding: 0 12px;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
             z-index: 1000;
+            gap: 12px;
+        }
+
+        /* Left Section - Image Icon (Middle-Left / Center area) */
+        .left-section {
+            flex: 1;
+            display: flex;
+            justify-content: flex-start;
+            padding-left: 60px; /* Adjusts it toward center but slightly left */
+        }
+
+        .taskbar-image {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            object-fit: cover;
+        }
+
+        .taskbar-image:hover {
+            transform: scale(1.08);
+        }
+
+        /* Right Section */
+        .right-section {
+            display: flex;
+            align-items: center;
             gap: 10px;
         }
 
@@ -78,7 +105,7 @@
             cursor: pointer;
         }
 
-        /* Panels - Material 3 Style */
+        /* Panels */
         .panel {
             position: fixed;
             bottom: 64px;
@@ -101,7 +128,8 @@
         }
 
         .notification-panel { right: 20px; }
-        .time-panel { right: 20px; }   /* ← Back on the right side */
+        .time-panel { right: 20px; }
+        .image-panel { left: 20px; }   /* Panel opens on the left */
 
         .panel-header {
             padding: 20px 24px 12px;
@@ -115,86 +143,44 @@
             background-color: #3F2E32;
             margin: 0 8px;
         }
-
-        /* Time Panel Content */
-        .time-content {
-            padding: 20px 24px;
-            text-align: center;
-        }
-
-        .big-time {
-            font-size: 42px;
-            font-weight: 500;
-            color: #E0E0E0;
-            margin-bottom: 8px;
-        }
-
-        .full-date {
-            font-size: 15px;
-            color: #B0B0B0;
-            margin-bottom: 24px;
-        }
-
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 16px;
-            background-color: #3A2A2E;
-            border-radius: 20px;
-            margin: 0 16px 16px;
-        }
-
-        .toggle-label {
-            font-size: 14.5px;
-            color: #E0E0E0;
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 42px;
-            height: 24px;
-            background-color: #4A3A3E;
-            border-radius: 50px;
-            cursor: pointer;
-        }
-
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            width: 18px;
-            height: 18px;
-            background-color: #E0E0E0;
-            border-radius: 50%;
-            transition: all 0.3s;
-        }
-
-        .toggle-switch.active {
-            background-color: #8AB4F8;
-        }
-
-        .toggle-switch.active::after {
-            transform: translateX(18px);
-        }
     </style>
 </head>
 <body>
     <!-- Taskbar -->
     <div class="taskbar">
-        <!-- Notification Icon -->
-        <div class="icon-circle" id="notification-btn">
-            <span class="material-symbols-outlined">notifications</span>
+        <!-- Left Section: Image Icon (middle-left) -->
+        <div class="left-section">
+            <img src="https://i.postimg.cc/Kv4NSvM4/IMG-4056.png" 
+                 alt="Taskbar Icon" 
+                 class="taskbar-image"
+                 id="image-btn">
         </div>
 
-        <!-- Clickable Date -->
-        <div class="date" id="date-btn">
-            <span id="date"></span>
+        <!-- Right Section -->
+        <div class="right-section">
+            <!-- Notification Icon -->
+            <div class="icon-circle" id="notification-btn">
+                <span class="material-symbols-outlined">notifications</span>
+            </div>
+
+            <!-- Clickable Date -->
+            <div class="date" id="date-btn">
+                <span id="date"></span>
+            </div>
         </div>
     </div>
 
-    <!-- Notification Panel (Right) -->
+    <!-- Image Panel (opens on Left) -->
+    <div class="panel image-panel" id="image-panel">
+        <div class="panel-header">Menu</div>
+        <div class="divider"></div>
+        <div style="padding: 24px; text-align: center; color: #B0B0B0; font-size: 15px;">
+            This is your custom panel.<br>
+            Add apps, shortcuts, or content here.
+        </div>
+    </div>
+
+    <!-- Notification Panel -->
     <div class="panel notification-panel" id="notification-panel">
         <div class="panel-header">Notifications</div>
         <div class="divider"></div>
@@ -203,16 +189,16 @@
         </div>
     </div>
 
-    <!-- Time Panel (Now on Right) -->
+    <!-- Time Panel -->
     <div class="panel time-panel" id="time-panel">
         <div class="panel-header">Date &amp; Time</div>
         <div class="divider"></div>
         
-        <div class="time-content">
+        <div class="time-content" style="padding: 20px 24px; text-align: center;">
             <div class="big-time" id="big-time">12:00:00</div>
             <div class="full-date" id="full-date">May 28, 2026</div>
             
-            <div class="toggle-container">
+            <div class="toggle-container" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background-color: #3A2A2E; border-radius: 20px; margin: 0 16px 16px;">
                 <span class="toggle-label">24 hour time</span>
                 <div class="toggle-switch" id="military-toggle"></div>
             </div>
@@ -220,30 +206,44 @@
     </div>
 
     <script>
+        const imageBtn = document.getElementById('image-btn');
         const notificationBtn = document.getElementById('notification-btn');
         const dateBtn = document.getElementById('date-btn');
+
+        const imagePanel = document.getElementById('image-panel');
         const notificationPanel = document.getElementById('notification-panel');
         const timePanel = document.getElementById('time-panel');
         const militaryToggle = document.getElementById('military-toggle');
         
         let use24Hour = false;
 
-        // Toggle notification panel
-        notificationBtn.addEventListener('click', (e) => {
+        // Image Button (opens panel on left)
+        imageBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            notificationPanel.classList.toggle('show');
+            imagePanel.classList.toggle('show');
+            notificationPanel.classList.remove('show');
             timePanel.classList.remove('show');
         });
 
-        // Toggle time panel
+        // Notification Button
+        notificationBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notificationPanel.classList.toggle('show');
+            imagePanel.classList.remove('show');
+            timePanel.classList.remove('show');
+        });
+
+        // Date Button
         dateBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             timePanel.classList.toggle('show');
+            imagePanel.classList.remove('show');
             notificationPanel.classList.remove('show');
         });
 
-        // Close panels when clicking outside
+        // Close all panels when clicking outside
         document.addEventListener('click', () => {
+            imagePanel.classList.remove('show');
             notificationPanel.classList.remove('show');
             timePanel.classList.remove('show');
         });
@@ -254,19 +254,17 @@
             militaryToggle.classList.toggle('active', use24Hour);
         });
 
-        // Live Time & Date
+        // Live Clock & Date
         function updateClock() {
             const now = new Date();
             
             // Taskbar date
             const day = String(now.getDate()).padStart(2, '0');
             const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            const monthShort = months[now.getMonth()];
-            document.getElementById('date').textContent = `${day}-${monthShort}-${now.getFullYear()}`;
+            document.getElementById('date').textContent = `${day}-${months[now.getMonth()]}-${now.getFullYear()}`;
 
-            // Full date in panel
-            const fullDateStr = `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
-            document.getElementById('full-date').textContent = fullDateStr;
+            // Panel date
+            document.getElementById('full-date').textContent = `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
 
             // Big time
             let hours = now.getHours();
@@ -281,7 +279,6 @@
                 const displayHour = hours % 12 || 12;
                 timeStr = `${displayHour}:${minutes}:${seconds} ${ampm}`;
             }
-
             document.getElementById('big-time').textContent = timeStr;
         }
 
